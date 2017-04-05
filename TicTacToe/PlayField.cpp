@@ -20,8 +20,8 @@ Play_field::Play_field() : field(vector<vector<int>>(PLAY_SIZE)) {
 	}
 }
 
-void Play_field::put(int x, int y, int shape) { field[x][y] = shape; }
-int Play_field::get(int x, int y) { return field[x][y]; }
+void Play_field::put(int x, int y, int shape) { field[y][x] = shape; }
+int Play_field::get(int x, int y) { return field[y][x]; }
 
 void Play_field::display() {
 	cout << "\n";
@@ -80,7 +80,6 @@ int Play_field::check_win_condition() {
 
 	if ((player = field[PLAY_SIZE - 1][0]) != EMPTY) {
 		for (int i = 1; i < PLAY_SIZE; ++i) {
-			cout << "field[" << PLAY_SIZE-i << "][" << i << "] is " << field[PLAY_SIZE - i][i] << "\n";
 			if (field[PLAY_SIZE - i -1][i] != player) break;
 			if (i == PLAY_SIZE - 1) win_condition = player;
 		}

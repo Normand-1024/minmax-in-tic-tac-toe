@@ -4,8 +4,11 @@
 using namespace std;
 
 void ai_move(Play_field& game_state, int shape) {
-	for (int i = 0; i < PLAY_SIZE; ++i) {
-		for (int j = 0; j < PLAY_SIZE; ++j)
-			if (game_state.get(i,j) == EMPTY) game_state.put(i,j,shape);
+	for (int y = 0; y < PLAY_SIZE; ++y) {
+		for (int x = 0; x < PLAY_SIZE; ++x)
+			if (game_state.get(x, y) == EMPTY) { 
+				game_state.put(x, y, shape);
+				return;
+			}
 	}
 }
