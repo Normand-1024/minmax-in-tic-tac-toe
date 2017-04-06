@@ -26,7 +26,7 @@ void start_game() {
 		/*
 			Determine Difficulty
 		*/
-		cout << "\nPlease Choose Your Difficulty!\n1: Easy\n2 : Medium\n3 : Hard\nEnter Number:";
+		cout << "\nPlease Choose Your Difficulty!\n1: Easy\n2: Medium\n3: Hard\nEnter Number:";
 		cin >> difficulty;
 
 		/*

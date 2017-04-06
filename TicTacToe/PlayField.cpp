@@ -21,9 +21,9 @@ Play_field::Play_field() : field(vector<vector<int>>(PLAY_SIZE)) {
 }
 
 void Play_field::put(int x, int y, int shape) { field[y][x] = shape; }
-int Play_field::get(int x, int y) { return field[y][x]; }
+int Play_field::get(int x, int y) const { return field[y][x]; }
 
-void Play_field::display() {
+void Play_field::display() const {
 	cout << "\n";
 	for (vector<int> a : field) {
 		for (int i = 0; i < PLAY_SIZE; ++i) {
@@ -43,7 +43,7 @@ void Play_field::clear() {
 	}
 }
 
-int Play_field::check_win_condition() {
+int Play_field::check_win_condition() const {
 	int player, win_condition = NOT_OVER;
 	//check row win condition
 	for (int row = 0; row < PLAY_SIZE; ++row) {

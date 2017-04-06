@@ -16,13 +16,13 @@ class Play_field {
 public:
 	Play_field();
 	void put(int x, int y, int shape);
-	int get(int x, int y);
+	int get(int x, int y) const;
 
-	void display();
+	void display() const;
 
 	void clear();
 
-	int check_win_condition();
+	int check_win_condition()  const;
 
 private:
 	vector<vector<int>> field;
