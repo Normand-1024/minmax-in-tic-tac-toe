@@ -59,7 +59,7 @@ pair<int, int> ALPHA_BETA_SEARCH(const Play_field& game_state, const int shape) 
 					recursively call MIN_VALUE and store the action and its v value
 				*/
 				node_generate_count++;
-				temp_v = MIN_VALUE(new_game_state, MAX_UTILITY, MIN_UTILITY, -shape);
+				temp_v = MIN_VALUE(new_game_state, alpha, beta, -shape);
 				action_array.push_back(new action(temp_v, pair<int,int>(x, y)));
 
 				/*
@@ -137,7 +137,7 @@ int MAX_VALUE(Play_field& game_state, int alpha, int beta, const int shape) {
 			}
 		}
 	}
-
+	cout << "Total node count: " << node_generate_count << "\n";
 	return v;
 }
 
@@ -177,5 +177,6 @@ int MIN_VALUE(Play_field& game_state, int alpha, int beta, const int shape) {
 		}
 	}
 
+	cout << "Total node count: " << node_generate_count << "\n";
 	return v;
 }
