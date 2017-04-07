@@ -84,7 +84,7 @@ void start_game() {
 }
 
 int run_game(Play_field& game_state, int player_shape, int difficulty, bool player_first) {
-	int win_condition = NOT_OVER, ai_shape, player_x, player_y;
+	int win_condition = NOT_OVER, ai_shape, player_x, player_y, game_progress = 0;
 	bool player_played = !player_first;
 
 	if (player_shape == X)
@@ -96,7 +96,7 @@ int run_game(Play_field& game_state, int player_shape, int difficulty, bool play
 		game_state.display();
 
 		if (player_played)
-			ai_move(game_state, ai_shape);
+			ai_move(game_state, ai_shape, game_progress);
 		else {
 			cout << "\nEnter X coordiante(start with 1 from the left): ";
 			cin >> player_x;
@@ -110,6 +110,7 @@ int run_game(Play_field& game_state, int player_shape, int difficulty, bool play
 		}
 
 		player_played = !player_played;
+		game_progress++;
 
 	} while ((win_condition = game_state.check_win_condition()) == NOT_OVER);
 

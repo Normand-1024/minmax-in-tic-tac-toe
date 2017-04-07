@@ -4,15 +4,6 @@
 
 using namespace std;
 
-#define PLAY_SIZE 4
-#define X 1
-#define EMPTY 0
-#define O -1
-#define X_WIN 1
-#define DRAW 0
-#define X_LOSE -1
-#define NOT_OVER -2
-
 Play_field::Play_field() : field(vector<vector<int>>(PLAY_SIZE)) {
 	for (int i = 0; i < PLAY_SIZE; ++i) {
 		for (int j = 0; j < PLAY_SIZE; ++j)
@@ -55,7 +46,7 @@ int Play_field::check_win_condition() const {
 		}
 	}
 
-	if (win_condition != -2) return win_condition;
+	if (win_condition != NOT_OVER) return win_condition;
 
 	//check column win condition
 	for (int col = 0; col < PLAY_SIZE; ++col) {
@@ -67,7 +58,7 @@ int Play_field::check_win_condition() const {
 		}
 	}
 
-	if (win_condition != -2) return win_condition;
+	if (win_condition != NOT_OVER) return win_condition;
 
 	//check diagonal win condition
 	if ((player = field[0][0]) != EMPTY) {
@@ -76,7 +67,7 @@ int Play_field::check_win_condition() const {
 			if (i == PLAY_SIZE - 1) win_condition = player;
 		}
 	}
-	if (win_condition != -2) return win_condition;
+	if (win_condition != NOT_OVER) return win_condition;
 
 	if ((player = field[PLAY_SIZE - 1][0]) != EMPTY) {
 		for (int i = 1; i < PLAY_SIZE; ++i) {
@@ -84,7 +75,7 @@ int Play_field::check_win_condition() const {
 			if (i == PLAY_SIZE - 1) win_condition = player;
 		}
 	}
-	if (win_condition != -2) return win_condition;
+	if (win_condition != NOT_OVER) return win_condition;
 
 
 	//Check if Draw

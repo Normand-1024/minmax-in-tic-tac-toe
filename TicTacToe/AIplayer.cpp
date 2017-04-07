@@ -22,24 +22,30 @@ struct node {
 };
 
 
-pair<int, int> ALPHA_BETA_SEARCH(const Play_field& game_state,const int shape);
-int MAX_VALUE(Play_field& game_state, int alpha, int beta, const int shape);
-int MIN_VALUE(Play_field& game_state, int alpha, int beta, const int shape);
+pair<int, int> ALPHA_BETA_SEARCH(const Play_field& game_state,int shape, int cutoff);
+int MAX_VALUE(Play_field& game_state, int alpha, int beta, int shape, int cutoff);
+int MIN_VALUE(Play_field& game_state, int alpha, int beta, int shape, int cutoff);
 
 
-void ai_move(Play_field& game_state, const int shape) {
+void ai_move(Play_field& game_state, int shape, int game_progress) {
 	pair<int, int> next_move;
+	/*
+		The thought behind cutoff point is that further into the game, the more depths should be explored (game_progress = # of moves) 
+	*/
+	int cutoff =  game_progress;
+	node_generate_count = 1;
 
-	node_generate_count++;
-
-	next_move = ALPHA_BETA_SEARCH(game_state, shape);
-	cout << "next move: " << next_move.first << ", " << next_move.second << "\n";
+	if (game_progress == 0)
+		// Randomly generate the next move to make it more interesting
+		next_move = pair<int, int>(rand() % PLAY_SIZE, rand() % PLAY_SIZE);
+	else
+		next_move = ALPHA_BETA_SEARCH(game_state, shape, cutoff);
 
 	game_state.put(next_move.first, next_move.second, shape);
 }
 
 
-pair<int, int> ALPHA_BETA_SEARCH(const Play_field& game_state, const int shape) {
+pair<int, int> ALPHA_BETA_SEARCH(const Play_field& game_state, int shape, int cutoff) {
 	/*
 		A vector storing move(in terms of pair) and their related v value
 	*/
@@ -53,13 +59,13 @@ pair<int, int> ALPHA_BETA_SEARCH(const Play_field& game_state, const int shape) 
 				/*
 					Create a new state with action applied
 				*/
-				Play_field new_game_state = game_state;
+				Play_field new_game_state(game_state);
 				new_game_state.put(x, y, shape);
 				/*
 					recursively call MIN_VALUE and store the action and its v value
 				*/
 				node_generate_count++;
-				temp_v = MIN_VALUE(new_game_state, alpha, beta, -shape);
+				temp_v = MIN_VALUE(new_game_state, alpha, beta, -shape, cutoff - 1);
 				action_array.push_back(new action(temp_v, pair<int,int>(x, y)));
 
 				/*
@@ -77,12 +83,13 @@ pruning:
 	/*
 		Choose the best action to return
 	*/
+	bool copied = false;
 	cout << "Total node count: " << node_generate_count << " v is " << v << "\n";
 	for (action* i : action_array) {
 		cout << i->first << ": " << i->second.first << ", " << i->second.second << "\n";
-		if (i->first == v) {
-			cout << "Being copied: " << i->second.first << ", " << i->second.second << "\n";
+		if (!copied && i->first == v) {
 			output = i->second;
+			copied = true;
 		}
 		delete i;
 	}
@@ -90,23 +97,172 @@ pruning:
 	return output;
 }
 
-
-int UTILITY(const Play_field& game_state, int shape) {
-	int win_condition = game_state.check_win_condition();
-	if (win_condition == shape)
-		return MAX_UTILITY;
-	else if (win_condition == -shape)
-		return MIN_UTILITY;
+/*
+	Helper functions for EVAL
+*/
+void increment_counter(int& X_counter, int& O_counter, int role) {
+	if (role == X)
+		X_counter++;
 	else
-		return win_condition;
+		O_counter++;
+}
+
+void increment_variable(int& X_1, int& X_2, int& X_3, int& O_1, int& O_2, int& O_3, int X_counter, int O_counter) {
+	switch (X_counter) {
+	case 0: {
+		switch (O_counter) {
+		case 1: {
+			X_1++;
+			break;
+		}
+		case 2: {
+			X_2++;
+			break;
+		}
+		case 3: {
+			X_3++;
+			break;
+		}
+		default: break;
+		}
+	}
+			break;
+	case 1: {
+		X_1++;
+		break;
+	}
+	case 2: {
+		X_2++;
+		break;
+	}
+	case 3: {
+		X_3++;
+		break;
+	}
+	}
+}
+
+int EVAL(const Play_field& game_state, int shape) {
+	//Variables for calculating EVAL
+	int X_1 = 0, X_2 = 0, X_3 = 0, O_1 = 0, O_2 = 0, O_3 = 0;
+	//Variables for counting
+	int X_counter = 0, O_counter = 0, role = 0, current_shape = 0;
+
+	//Counting rows
+	for (int y = 0; y < PLAY_SIZE; ++y) {
+		for (int x = 0; x < PLAY_SIZE; ++x) {
+			current_shape = game_state.get(x, y);
+
+			if (current_shape != EMPTY) {
+				if (role == 0)
+					role = current_shape;
+
+				if (current_shape == role)
+					increment_counter(X_counter, O_counter, role);
+				else {
+					role = 0;
+					break;
+				}
+			}
+		}
+		if (role != 0)
+			increment_variable(X_1, X_2, X_3, O_1, O_2, O_3, X_counter, O_counter);
+		role = X_counter = O_counter = 0;
+	}
+
+	//Counting columns
+	for (int x = 0; x < PLAY_SIZE; ++x) {
+		for (int y = 0; y < PLAY_SIZE; ++y) {
+			current_shape = game_state.get(x, y);
+
+			if (current_shape != EMPTY) {
+				if (role == 0)
+					role = current_shape;
+
+				if (current_shape == role)
+					increment_counter(X_counter, O_counter, role);
+				else {
+					role = 0;
+					break;
+				}
+			}
+		}
+		if (role != 0)
+			increment_variable(X_1, X_2, X_3, O_1, O_2, O_3, X_counter, O_counter);
+		role = X_counter = O_counter = 0;
+	}
+
+	//Counting diagonal
+	for (int y = 0, x = 0; y < PLAY_SIZE; ++y, ++x) {
+			current_shape = game_state.get(x, y);
+
+			if (current_shape != EMPTY) {
+				if (role == 0)
+					role = current_shape;
+
+				if (current_shape == role)
+					increment_counter(X_counter, O_counter, role);
+				else {
+					role = 0;
+					break;
+				}
+			}
+	}
+	if (role != 0)
+		increment_variable(X_1, X_2, X_3, O_1, O_2, O_3, X_counter, O_counter);
+	role = X_counter = O_counter = 0;
+
+	// Counting the other diagonal
+	for (int y = PLAY_SIZE - 1, x = PLAY_SIZE - 1; y >= 0; --y, --x) {
+		current_shape = game_state.get(x, y);
+
+		if (current_shape != EMPTY) {
+			if (role == 0)
+				role = current_shape;
+
+			if (current_shape == role)
+				increment_counter(X_counter, O_counter, role);
+			else {
+				role = 0;
+				break;
+			}
+		}
+	}
+	if (role != 0)
+		increment_variable(X_1, X_2, X_3, O_1, O_2, O_3, X_counter, O_counter);
+
+	int X_eval = 6 * X_3 + 3 * X_2 + X_1, O_eval = 6 * O_3 + 3 * O_2 + O_1;
+	if (shape == X)
+		return X_eval - O_eval;
+	else
+		return O_eval - X_eval;
 }
 
 
-int MAX_VALUE(Play_field& game_state, int alpha, int beta, const int shape) {
+int UTILITY(const Play_field& game_state, int shape, int cutoff) {
+	if (cutoff > 0) {
+		int win_condition = game_state.check_win_condition();
+		if (win_condition == shape)
+			return MAX_UTILITY;
+		else if (win_condition == -shape)
+			return MIN_UTILITY;
+		else
+			return win_condition;
+	}
+	else {
+		/*
+			Pass the game state to evaluate expected utility
+		*/
+		return EVAL(game_state, shape);
+	}
+}
+
+
+int MAX_VALUE(Play_field& game_state, int alpha, int beta, int shape, int cutoff) {
 	/*
 		Utility node checking
 	*/
-	int utility = UTILITY(game_state, shape);
+	int utility = UTILITY(game_state, shape, cutoff);
 	if (utility != NOT_OVER)
 		return utility;
 
@@ -118,14 +274,14 @@ int MAX_VALUE(Play_field& game_state, int alpha, int beta, const int shape) {
 				/*
 					Create a new state with action applied
 				*/
-				Play_field new_game_state = game_state;
+				Play_field new_game_state(game_state);
 				new_game_state.put(x, y, shape);
 
 				/*
 					Recursively call MIN_VALUE and store the action and its v value
 				*/
 				node_generate_count++;
-				temp_v = MIN_VALUE(new_game_state, alpha, beta, -shape);
+				temp_v = MIN_VALUE(new_game_state, alpha, beta, -shape, cutoff - 1);
 
 				/*
 					Updating v, alpha and prune if needed
@@ -137,16 +293,15 @@ int MAX_VALUE(Play_field& game_state, int alpha, int beta, const int shape) {
 			}
 		}
 	}
-	cout << "Total node count: " << node_generate_count << "\n";
 	return v;
 }
 
 
-int MIN_VALUE(Play_field& game_state, int alpha, int beta, const int shape) {
+int MIN_VALUE(Play_field& game_state, int alpha, int beta, int shape, int cutoff) {
 	/*
 	Utility node checking
 	*/
-	int utility = UTILITY(game_state, -shape);
+	int utility = UTILITY(game_state, -shape, cutoff);
 	if (utility != NOT_OVER)
 		return utility;
 
@@ -158,13 +313,13 @@ int MIN_VALUE(Play_field& game_state, int alpha, int beta, const int shape) {
 				/*
 					Create a new state with action applied
 				*/
-				Play_field new_game_state = game_state;
+				Play_field new_game_state(game_state);
 				new_game_state.put(x, y, shape);
 				/*
 					Recursively call MAX_VALUE and store the action and its v value
 				*/
 				node_generate_count++;
-				temp_v = MAX_VALUE(new_game_state, alpha, beta, -shape);
+				temp_v = MAX_VALUE(new_game_state, alpha, beta, -shape, cutoff - 1);
 
 				/*
 					Updating v, beta and prune if needed
@@ -177,6 +332,5 @@ int MIN_VALUE(Play_field& game_state, int alpha, int beta, const int shape) {
 		}
 	}
 
-	cout << "Total node count: " << node_generate_count << "\n";
 	return v;
 }
