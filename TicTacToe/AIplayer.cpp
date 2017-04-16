@@ -35,13 +35,13 @@ void ai_move(Play_field& game_state, int shape, int game_progress, int difficult
 		The thought behind cutoff point:
 		Easy: Only explore 1 levels
 		Medium: Only explore 2 level
-		Hard: Further into the game, the more depths should be explored (game_progress = # of moves)
+		Hard: More moves played, the more depths should be explored (game_progress = # of moves)
 
 		static_cutoff is used to calculate the actual cutoff point, since cutoff will be changed as the search goes on
 	*/
 	if (difficulty == 1)	static_cutoff = 1;
 	else if (difficulty == 2)	static_cutoff = 2;
-	else static_cutoff = game_progress - 3 * (3 - difficulty);
+	else static_cutoff = game_progress;
 	node_generate_count = 1;
 	max_depth = 0;
 
@@ -159,6 +159,13 @@ void increment_variable(int& X_1, int& X_2, int& X_3, int& O_1, int& O_2, int& O
 	}
 }
 
+/*
+	EVAL function:  utility = 6X_3 + 3X_2 + X_1 - (6O_3 + 3 O_2 + O_1)
+
+	where X represents AI's role, O represents player's role
+
+	X_3 means number of rows, columns and diagonals that have and ONLY have 3 X-es, no O-s. etc. 
+*/
 int EVAL(const Play_field& game_state, int shape) {
 	//Variables for calculating EVAL
 	int X_1 = 0, X_2 = 0, X_3 = 0, O_1 = 0, O_2 = 0, O_3 = 0;
@@ -302,7 +309,7 @@ int MAX_VALUE(Play_field& game_state, int alpha, int beta, int shape, int cutoff
 				new_game_state.put(x, y, shape);
 
 				/*
-					Recursively call MIN_VALUE and store the action and its v value
+					Recursively call MIN_VALUE
 				*/
 				node_generate_count++;
 				temp_v = MIN_VALUE(new_game_state, alpha, beta, -shape, cutoff - 1);
@@ -348,7 +355,7 @@ int MIN_VALUE(Play_field& game_state, int alpha, int beta, int shape, int cutoff
 				Play_field new_game_state(game_state);
 				new_game_state.put(x, y, shape);
 				/*
-					Recursively call MAX_VALUE and store the action and its v value
+					Recursively call MAX_VALUE
 				*/
 				node_generate_count++;
 				temp_v = MAX_VALUE(new_game_state, alpha, beta, -shape, cutoff - 1);

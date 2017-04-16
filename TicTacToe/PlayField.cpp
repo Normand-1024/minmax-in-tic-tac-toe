@@ -81,7 +81,7 @@ int Play_field::check_win_condition() const {
 	if (win_condition != NOT_OVER) return win_condition;
 
 
-	//Check if Draw
+	//check if Draw
 	win_condition = DRAW;
 	for (int i = 0; i < PLAY_SIZE; ++i) {
 		for(int j = 0; j < PLAY_SIZE; ++j)
