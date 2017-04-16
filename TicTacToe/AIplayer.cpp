@@ -4,14 +4,16 @@
 
 using namespace std;
 
-#define MAX_UTILITY 1000
-#define MIN_UTILITY -1000
+enum utility { MAX_UTILITY = 1000, MIN_UTILITY = -1000 };
 /*
-	An action has a coordinate and the v value related to that action
+	An action has a coordinate(second) and the v value(first) related to that action
 */
 typedef pair<int, pair<int, int>> action;
 
-int node_generate_count = 0;
+/*
+	Important global variables for status report
+*/
+int node_generate_count = 0, max_depth = 0, static_cutoff = 0, if_cutoff = 0, max_prune = 0, min_prune = 0;
 
 struct node {
 	node(Play_field& p_state, int p_alpha, int p_beta) 
@@ -27,19 +29,34 @@ int MAX_VALUE(Play_field& game_state, int alpha, int beta, int shape, int cutoff
 int MIN_VALUE(Play_field& game_state, int alpha, int beta, int shape, int cutoff);
 
 
-void ai_move(Play_field& game_state, int shape, int game_progress) {
-	pair<int, int> next_move;
+void ai_move(Play_field& game_state, int shape, int game_progress, int difficulty) {
+	pair<int, int> next_move = {-1,-1};
 	/*
-		The thought behind cutoff point is that further into the game, the more depths should be explored (game_progress = # of moves) 
-	*/
-	int cutoff =  game_progress;
-	node_generate_count = 1;
+		The thought behind cutoff point:
+		Easy: Only explore 1 levels
+		Medium: Only explore 2 level
+		Hard: Further into the game, the more depths should be explored (game_progress = # of moves)
 
-	if (game_progress == 0)
+		static_cutoff is used to calculate the actual cutoff point, since cutoff will be changed as the search goes on
+	*/
+	if (difficulty == 1)	static_cutoff = 1;
+	else if (difficulty == 2)	static_cutoff = 2;
+	else static_cutoff = game_progress - 3 * (3 - difficulty);
+	node_generate_count = 1;
+	max_depth = 0;
+
+	if (game_progress == 0) {
 		// Randomly generate the next move to make it more interesting
-		next_move = pair<int, int>(rand() % PLAY_SIZE, rand() % PLAY_SIZE);
-	else
-		next_move = ALPHA_BETA_SEARCH(game_state, shape, cutoff);
+		while (!game_state.valid_input(next_move.first, next_move.second)) next_move = pair<int, int>(rand() % PLAY_SIZE, rand() % PLAY_SIZE);
+		cout << "\nA random move was chosen instead of using ALPHA_BETA_SEARCH\nNo cutoff occured\nOnly generated 1 node\nMax depth is 0\nPruning for both MIN and Max is 0\n";
+	}
+	else {
+		next_move = ALPHA_BETA_SEARCH(game_state, shape, static_cutoff);
+		cout << "\nStatus Report:\n";
+		if (if_cutoff == 1) cout << "\n-Cutoff occured\n";
+		else cout << "\n-No cutoff occured\n";
+		cout << "-Total node count: " << node_generate_count << "\n-Max depth: " << max_depth << "\n-Pruning count for MAX_VALUE: " << max_prune << "\n-Pruning count for MIN_VALUE: " << min_prune << endl;
+	}
 
 	game_state.put(next_move.first, next_move.second, shape);
 }
@@ -51,6 +68,7 @@ pair<int, int> ALPHA_BETA_SEARCH(const Play_field& game_state, int shape, int cu
 	*/
 	vector<action*> action_array;
 	pair<int, int> output;
+	bool if_cutoff = false;
 	int v = INT_MIN, alpha = MIN_UTILITY, beta = MAX_UTILITY, temp_v;
 
 	for (int y = 0; y < PLAY_SIZE; ++y) {
@@ -72,8 +90,10 @@ pair<int, int> ALPHA_BETA_SEARCH(const Play_field& game_state, int shape, int cu
 					updating v, alpha and prune if needed
 				*/
 				v = max(v, temp_v);
-				if (v >= beta)
+				if (v >= beta) {
+					++max_prune;
 					goto pruning;
+				}
 				alpha = max(alpha, v);
 			}
 		}
@@ -84,16 +104,13 @@ pruning:
 		Choose the best action to return
 	*/
 	bool copied = false;
-	cout << "Total node count: " << node_generate_count << " v is " << v << "\n";
 	for (action* i : action_array) {
-		cout << i->first << ": " << i->second.first << ", " << i->second.second << "\n";
 		if (!copied && i->first == v) {
 			output = i->second;
 			copied = true;
 		}
 		delete i;
 	}
-
 	return output;
 }
 
@@ -253,12 +270,19 @@ int UTILITY(const Play_field& game_state, int shape, int cutoff) {
 		/*
 			Pass the game state to evaluate expected utility
 		*/
+		if_cutoff = 1;
 		return EVAL(game_state, shape);
 	}
 }
 
 
 int MAX_VALUE(Play_field& game_state, int alpha, int beta, int shape, int cutoff) {
+	/*
+		Update max_depth
+	*/
+	int current_depth = static_cutoff - cutoff;
+	if (current_depth > max_depth) max_depth = current_depth;
+
 	/*
 		Utility node checking
 	*/
@@ -287,8 +311,10 @@ int MAX_VALUE(Play_field& game_state, int alpha, int beta, int shape, int cutoff
 					Updating v, alpha and prune if needed
 				*/
 				v = max(v, temp_v);
-				if (v >= beta)
+				if (v >= beta) {
+					++max_prune;
 					return v;
+				}
 				alpha = max(alpha, v);
 			}
 		}
@@ -299,7 +325,13 @@ int MAX_VALUE(Play_field& game_state, int alpha, int beta, int shape, int cutoff
 
 int MIN_VALUE(Play_field& game_state, int alpha, int beta, int shape, int cutoff) {
 	/*
-	Utility node checking
+		Update max_depth
+	*/
+	int current_depth = static_cutoff - cutoff;
+	if (current_depth > max_depth) max_depth = current_depth;
+
+	/*
+		Utility node checking
 	*/
 	int utility = UTILITY(game_state, -shape, cutoff);
 	if (utility != NOT_OVER)
@@ -325,8 +357,10 @@ int MIN_VALUE(Play_field& game_state, int alpha, int beta, int shape, int cutoff
 					Updating v, beta and prune if needed
 				*/
 				v = min(v, temp_v);
-				if (v <= alpha)
+				if (v <= alpha) {
+					++min_prune;
 					return v;
+				}
 				beta = min(beta, v);
 			}
 		}

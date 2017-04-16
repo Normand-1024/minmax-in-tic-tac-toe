@@ -13,6 +13,9 @@ Play_field::Play_field() : field(vector<vector<int>>(PLAY_SIZE)) {
 
 void Play_field::put(int x, int y, int shape) { field[y][x] = shape; }
 int Play_field::get(int x, int y) const { return field[y][x]; }
+bool Play_field::valid_input(int x, int y) const {
+	return (x >= 0 && x <= PLAY_SIZE - 1 && y >= 0 && y <= PLAY_SIZE - 1 && field[y][x] == EMPTY);
+}
 
 void Play_field::display() const {
 	cout << "\n";
