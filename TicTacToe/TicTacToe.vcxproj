@@ -71,12 +71,16 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
+    <LibraryPath>$(LibraryPath)</LibraryPath>
+    <IncludePath>C:\Users\Henry\Documents\Visual Studio 2015\Projects\minmax-in-tic-tac-toe\SDL2_image\include;C:\Users\Henry\Documents\Visual Studio 2015\Projects\minmax-in-tic-tac-toe\SDL\include;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
+    <LibraryPath>$(LibraryPath)</LibraryPath>
+    <IncludePath>C:\Users\Henry\Documents\Visual Studio 2015\Projects\minmax-in-tic-tac-toe\SDL2_image\include;C:\Users\Henry\Documents\Visual Studio 2015\Projects\minmax-in-tic-tac-toe\SDL\include;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
@@ -93,6 +97,8 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>C:\Users\Henry\Documents\Visual Studio 2015\Projects\minmax-in-tic-tac-toe\SDL2_image\lib\x86;C:\Users\Henry\Documents\Visual Studio 2015\Projects\minmax-in-tic-tac-toe\SDL\lib\x86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>SDL2.lib;SDL2_image.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -125,6 +131,8 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>C:\Users\Henry\Documents\Visual Studio 2015\Projects\minmax-in-tic-tac-toe\SDL2_image\lib\x86;C:\Users\Henry\Documents\Visual Studio 2015\Projects\minmax-in-tic-tac-toe\SDL\lib\x86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>SDL2.lib;SDL2_image.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -149,9 +157,11 @@
     <ClCompile Include="AIplayer.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="PlayField.cpp" />
+    <ClCompile Include="Renderer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AIplayer.h" />
+    <ClInclude Include="Renderer.h" />
     <ClInclude Include="PlayField.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

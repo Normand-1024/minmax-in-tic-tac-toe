@@ -17,17 +17,17 @@ bool Play_field::valid_input(int x, int y) const {
 	return (x >= 0 && x <= PLAY_SIZE - 1 && y >= 0 && y <= PLAY_SIZE - 1 && field[y][x] == EMPTY);
 }
 
-void Play_field::display() const {
-	cout << "\n";
-	for (vector<int> a : field) {
-		for (int i = 0; i < PLAY_SIZE; ++i) {
-			if (a[i] == EMPTY) cout << "* ";
-			else if (a[i] == X) cout << "X ";
-			else cout << "O ";
+void Play_field::display(SDL_Renderer* ren, vector<SDL_Texture*>& display_vec, vector<SDL_Texture*>& role_vec) const {
+	renderTexture(display_vec[background_2], ren, 0, 0);
+
+	for (int i = 0; i < PLAY_SIZE; ++i) {
+		for (int j = 0; j < PLAY_SIZE; ++j) {
+			if (field[i][j] == X) 
+				renderTexture(role_vec[X_role], ren, j * SCREEN_WIDTH/4, i * SCREEN_HEIGHT / 4);
+			else if (field[i][j] == O)
+				renderTexture(role_vec[O_role], ren, j * SCREEN_WIDTH / 4, i * SCREEN_HEIGHT / 4);
 		}
-		cout << "\n";
 	}
-	cout << "\n";
 }
 
 void Play_field::clear() {

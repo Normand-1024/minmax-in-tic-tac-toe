@@ -24,12 +24,18 @@
     <ClCompile Include="AIplayer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Renderer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AIplayer.h">
       <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="PlayField.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Renderer.h">
       <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>
