@@ -17,8 +17,10 @@ enum tictactoe {
 	X_WIN = 1, DRAW = 0, X_LOSE = -1, NOT_OVER = -1001
 };
 
+//Index for different background images
 enum display_texture { background_1 = 0, background_2 = 1, win_screen = 2, draw_screen = 3, lost_screen = 4, replay_screen = 5 };
 
+//Index for different role images
 enum role_texture { O_role = 0, X_role = 1, YES = 2 };
 
 /*

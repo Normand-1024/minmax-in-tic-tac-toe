@@ -40,10 +40,10 @@ void ai_move(Play_field& game_state, int shape, int game_progress, int difficult
 		static_cutoff is used to calculate the actual cutoff point, since cutoff will be changed as the search goes on
 	*/
 	if (difficulty == 1)	static_cutoff = 1;
-	else if (difficulty == 2)	static_cutoff = 2;
+	else if (difficulty == 2) static_cutoff = 3;
 	else static_cutoff = game_progress;
 	node_generate_count = 1;
-	max_depth = 0;
+	max_depth = 0, max_prune = 0, min_prune = 0;
 
 	if (game_progress == 0) {
 		// Randomly generate the next move to make it more interesting

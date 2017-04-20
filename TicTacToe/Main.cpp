@@ -39,12 +39,6 @@ int main()
 		role_vec.push_back(loadTexture(i, ren));
 
 	start_game(win, ren, display_vec, role_vec);
-	/*
-	SDL_DestroyTexture(background);
-	SDL_DestroyTexture(X_image);
-	SDL_DestroyTexture(O_image);
-	SDL_DestroyRenderer(ren);
-	*/
 	SDL_DestroyWindow(win);
 	SDL_Quit();
 
