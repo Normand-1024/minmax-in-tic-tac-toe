@@ -71,7 +71,7 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <LibraryPath>$(LibraryPath)</LibraryPath>
+    <LibraryPath>C:\Users\Henry\Documents\Visual Studio 2015\Projects\minmax-in-tic-tac-toe\SDL\lib\x86;C:\Users\Henry\Documents\Visual Studio 2015\Projects\minmax-in-tic-tac-toe\SDL2_image\lib\x86;$(LibraryPath)</LibraryPath>
     <IncludePath>C:\Users\Henry\Documents\Visual Studio 2015\Projects\minmax-in-tic-tac-toe\SDL2_image\include;C:\Users\Henry\Documents\Visual Studio 2015\Projects\minmax-in-tic-tac-toe\SDL\include;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -79,7 +79,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
-    <LibraryPath>$(LibraryPath)</LibraryPath>
+    <LibraryPath>C:\Users\Henry\Documents\Visual Studio 2015\Projects\minmax-in-tic-tac-toe\SDL\lib\x86;C:\Users\Henry\Documents\Visual Studio 2015\Projects\minmax-in-tic-tac-toe\SDL2_image\lib\x86;$(LibraryPath)</LibraryPath>
     <IncludePath>C:\Users\Henry\Documents\Visual Studio 2015\Projects\minmax-in-tic-tac-toe\SDL2_image\include;C:\Users\Henry\Documents\Visual Studio 2015\Projects\minmax-in-tic-tac-toe\SDL\include;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
