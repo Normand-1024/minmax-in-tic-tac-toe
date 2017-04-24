@@ -110,13 +110,13 @@ void start_game(SDL_Window* win, SDL_Renderer* ren, vector<SDL_Texture*>& displa
 
 			//Render player shape
 			if (player_shape == O)
-				renderTexture(role_vec[O_role], ren, 2 * SCREEN_WIDTH / 3, 3 * SCREEN_HEIGHT / 8);
+				renderTexture(role_vec[O_role], ren, 2 * SCREEN_WIDTH / 3 - 35, 3 * SCREEN_HEIGHT / 8 - 35);
 			else
-				renderTexture(role_vec[X_role], ren, 2 * SCREEN_WIDTH / 3, 3 * SCREEN_HEIGHT / 8);
+				renderTexture(role_vec[X_role], ren, 2 * SCREEN_WIDTH / 3 - 35, 3 * SCREEN_HEIGHT / 8 - 35);
 
 			//Render player play first choice
 			if (player_first)
-				renderTexture(role_vec[YES], ren, 2 * SCREEN_WIDTH / 3, 4 * SCREEN_HEIGHT / 8);
+				renderTexture(role_vec[YES], ren, 2 * SCREEN_WIDTH / 3 + 17, 4 * SCREEN_HEIGHT / 8 + 17);
 
 			SDL_RenderPresent(ren);
 		}
